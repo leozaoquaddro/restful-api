@@ -1,0 +1,81 @@
+const PORT = 3000
+const express = require('express')
+const moment = require('moment')
+const app = express()
+
+// Middlewares
+const requestCurrentTime = function(req, res, next) {
+  moment.locale('pt-br')
+  req.currentTime = moment().format('LLLL')
+  next()
+}
+
+// Custom Logger
+const myLogger = function(req, res, next) {
+  console.log(`${req.currentTime} ==> ${req.method} ${req.url}`)
+  next()
+}
+
+app.use(requestCurrentTime)
+app.use(myLogger)
+
+// Routes
+// GET /
+app.get('/', (req, res) => {
+  const apiInfo = {
+    name: 'RESTful API',
+    version: '1.0.0'
+  } 
+
+  res.send(apiInfo)
+})
+
+// ALL /costumers
+// app.all('/costumers', function (req, res, next) {
+//   console.log(`${req.method} /costumers`)
+//   next()
+// })
+
+// GET /costumers
+app.get('/costumers', (req, res) => {
+  const costumers = [
+    {
+      id: 1,
+      name: "John Doe",
+      email: "john@doe.com"
+    },
+    {
+      id: 2,
+      name: "Mary Doe",
+      email: "mary@doe.com"
+    },
+    {
+      id: 3,
+      name: "Susan Doe",
+      email: "susan@doe.com"
+    }
+  ]
+  res.send(costumers)
+})
+
+// POST /costumers
+app.post('/costumers', function(req, res) {
+  res.send('POST')
+})
+
+// PUT /costumers
+app.put('/costumers', function(req, res) {
+  res.send('PUT')
+})
+
+// DELETE /costumers
+app.delete('/costumers', function(req, res) {
+  res.send('DELETE')
+})
+
+
+app.listen(PORT, () => {
+  // console.log('Servidor rodando na porta ' + PORT + '...')
+  // ES6 Template String:
+  console.log(`Servidor rodando na porta ${PORT}...`)
+})
