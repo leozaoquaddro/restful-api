@@ -1,12 +1,14 @@
 const PORT = 3000
 const express = require('express')
 const moment = require('moment')
+const bodyParser = require('body-parser')
 const app = express()
 
 // Middlewares
+// Custom CurrentTime
 const requestCurrentTime = function(req, res, next) {
   moment.locale('pt-br')
-  req.currentTime = moment().format('LLLL')
+  req.currentTime = moment().format('lll')
   next()
 }
 
@@ -18,6 +20,7 @@ const myLogger = function(req, res, next) {
 
 app.use(requestCurrentTime)
 app.use(myLogger)
+app.use(bodyParser.json())
 
 // Routes
 // GET /
@@ -38,6 +41,7 @@ app.get('/', (req, res) => {
 
 // GET /costumers
 app.get('/costumers', (req, res) => {
+  console.log(req.query)
   const costumers = [
     {
       id: 1,
@@ -58,19 +62,28 @@ app.get('/costumers', (req, res) => {
   res.send(costumers)
 })
 
+// GET /costumers/1
+app.get('/costumers/:id', (req, res) => {
+  console.log(req.params)
+  res.send(req.params.id)
+})
+
 // POST /costumers
-app.post('/costumers', function(req, res) {
+app.post('/costumers', (req, res) => {
+  console.log(req.body)
   res.send('POST')
 })
 
-// PUT /costumers
-app.put('/costumers', function(req, res) {
-  res.send('PUT')
+// PUT /costumers/1
+app.put('/costumers/:id', (req, res) => {
+  console.log(req.params)
+  res.send(req.params.id)
 })
 
-// DELETE /costumers
-app.delete('/costumers', function(req, res) {
-  res.send('DELETE')
+// DELETE /costumers/1
+app.delete('/costumers/:id', (req, res) => {
+  console.log(req.params)
+  res.send(req.params.id)
 })
 
 
