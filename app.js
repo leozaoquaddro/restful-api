@@ -2,9 +2,10 @@ const PORT = 3000
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const express = require('express')
-const moment = require('moment')
 const bodyParser = require('body-parser')
 const app = express()
+const currentTime = require('./middlewares/current-time.js')
+const myLogger = require('./middlewares/my-logger.js')
 
 // Mongoose Connection
 mongoose.connect('mongodb://localhost/local', { useMongoClient: true })
@@ -25,22 +26,8 @@ const customerSchema = new Schema({
 // Customer Model
 const CostumerModel = mongoose.model('costumers', customerSchema)
 
-// Middlewares
-// Custom CurrentTime
-const requestCurrentTime = function(req, res, next) {
-  moment.locale('pt-br')
-  req.currentTime = moment().format('lll')
-  next()
-}
-
-// Custom Logger
-const myLogger = function(req, res, next) {
-  console.log(`${req.currentTime} ==> ${req.method} ${req.url}`)
-  next()
-}
-
 // Register Middlewares
-app.use(requestCurrentTime)
+app.use(currentTime)
 app.use(myLogger)
 app.use(bodyParser.json())
 app.use(bodyParser.urlencoded({ extended: true }))
