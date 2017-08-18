@@ -1,14 +1,23 @@
-const PORT = 3000
 const mongoose = require('mongoose')
 const Schema = mongoose.Schema
 const express = require('express')
 const bodyParser = require('body-parser')
 const app = express()
+
+// App Config
+const fs = require('fs')
+const env = require('node-env-file')
+const envFile = __dirname + '/.env'
+if (fs.existsSync(envFile)) env(envFile)
+app.set('PORT', process.env.PORT)
+app.set('MONGO_CONNECTION', process.env.MONGO_CONNECTION)
+
+// Middlewares
 const currentTime = require('./middlewares/current-time.js')
 const myLogger = require('./middlewares/my-logger.js')
 
 // Mongoose Connection
-mongoose.connect('mongodb://localhost/local', { useMongoClient: true })
+mongoose.connect(app.get('MONGO_CONNECTION'), { useMongoClient: true })
 
 // Customer Schema
 const customerSchema = new Schema({
@@ -94,8 +103,6 @@ app.delete('/costumers/:id', (req, res) => {
 })
 
 
-app.listen(PORT, () => {
-  // console.log('Servidor rodando na porta ' + PORT + '...')
-  // ES6 Template String:
-  console.log(`Servidor rodando na porta ${PORT}...`)
+app.listen(app.get('PORT'), () => {
+  console.log(`Servidor rodando na porta ${app.get('PORT')}...`)
 })
